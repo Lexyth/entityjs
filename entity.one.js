@@ -8,7 +8,6 @@ let touch = await import("https://cdn.jsdelivr.net/gh/Lexyth/gesturejs/gesture.o
   .then(module => module).catch(e => {console.error("Failed to load module: GestureJS"); throw "Failed to load module: GestureJS";});//using both cause throwing doesn't show the message here but it's needed to stop execution...
 
 //add style to DOM
-//TODO: deal with html and body differently
 {
   let style = document.createElement("style");
   style.innerHTML = `.${noColId}game-view {
@@ -86,7 +85,7 @@ let frameCount = 0;
 //loop
 let loop = function (setupCallback, updateCallback) {
   
-  //make this into a promise so draw only starts once everything is ready
+  //TODO: make this into a promise so draw only starts once everything is ready
   setupCallback();
   
   function draw () {
