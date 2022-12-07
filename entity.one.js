@@ -44,46 +44,7 @@ let ctx = (function () {
   return ctx;
 })();
 
-let gestures = (() => {
-  let _gesture = function () {
-    let runningId = 0;
-    let listeners = {};
-    let func = function () {
-      for (let layer of Object.values(listeners))
-        for (let listener of Object.values(layer))
-          listener(...arguments);
-    };
-    func.addListener = (listener, layer=1000) => {
-      if (!listeners[layer])
-        listeners[layer] = {};
-      listener.id = runningId;
-      listeners[layer][runningId++] = listener;
-      return listener;
-    };
-    func.removeListener = (listener) => {
-      outer:
-      for (let layer of Object.keys(listeners))
-        if (listeners[layer][listener.id ?? listener]) {
-          let result = listeners[layer][listener.id ?? listener];
-          delete listeners[layer][listener.id ?? listener];
-          if (Object.keys(listeners[layer]).length == 0)
-            delete listeners[layer];
-          break outer;
-        }
-      return result;
-    };
-    return func;
-  };
-  return {
-    tap: _gesture()
-  };
-})();
-
-touch.addGestureListener(ctx.canvas, {
-  tap: function () {
-    gestures.tap(...arguments);
-  }
-});
+let gestures = touch.addEvents(ctx.canvas, "tap");
 
 let utility = {
   rotate: function (cx, cy, x, y, angle) {
@@ -124,6 +85,8 @@ let registeredEntities = {};
 let frameCount = 0;
 //loop
 let loop = function (setupCallback, updateCallback) {
+  
+  //make this into a promise so draw only starts once everything is ready
   setupCallback();
   
   function draw () {
