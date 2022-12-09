@@ -83,10 +83,11 @@ let registeredEntities = {};
 
 let frameCount = 0;
 //loop
-let loop = function (setupCallback, updateCallback) {
+let loop = function (updateCallback, setupCallback) {
   
   //TODO: make this into a promise so draw only starts once everything is ready
-  setupCallback();
+  if (typeof setupCallback === "function")
+    setupCallback();
   
   function draw () {
     frameCount++;
