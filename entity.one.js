@@ -1,5 +1,3 @@
-//create entity module
-
 //createNoColId
 let noColId = "nCId913805264104";
   
@@ -43,7 +41,7 @@ let ctx = (function () {
   return ctx;
 })();
 
-let gestures = touch.addEvents(ctx.canvas, "tap");
+ctx.gestures = touch.addEvents(ctx.canvas);
 
 let utility = {
   rotate: function (cx, cy, x, y, angle) {
@@ -86,8 +84,7 @@ let frameCount = 0;
 let loop = function (updateCallback, setupCallback) {
   
   //TODO: make this into a promise so draw only starts once everything is ready
-  if (typeof setupCallback === "function")
-    setupCallback();
+  let setupResult = typeof setupCallback === "function" ? setupCallback() : undefined;
   
   function draw () {
     frameCount++;
@@ -97,7 +94,7 @@ let loop = function (updateCallback, setupCallback) {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.restore();
     
-    updateCallback();
+    updateCallback(setupResult);
     
     for (let layer of Object.keys(registeredEntities))
       for (let id of Object.keys(registeredEntities[layer]))
@@ -291,7 +288,7 @@ let modifiers = {
       }
     });
     Object.defineProperty(entity, "hitable", {value: hitable});
-    let tapListener = gestures.tap.addListener(function () {
+    let tapListener = ctx.gestures.tap.addListener(function () {
       if (!entity.visible)
         return;
       let pos = Object.values(arguments[0])[0].initialPosition;
